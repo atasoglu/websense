@@ -7,7 +7,7 @@ name = "websense"
 version = "0.1.0"
 description = "A modular AI-powered web scraper for data pipelines."
 readme = "README.md"
-authors = [{ name = "Author Name", email = "author@example.com" }]
+authors = [{ name = "Ahmet Atasoglu", email = "ahmetatasoglu98@gmail.com" }]
 license = { text = "MIT" }
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -25,4 +25,4 @@ dev = [
     "pre-commit",
 ]
 [project.urls]
-"Homepage" = "https://github.com/example/websense"
+"Homepage" = "https://github.com/atasoglu/websense"
