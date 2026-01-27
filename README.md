@@ -1,5 +1,10 @@
 # WebSense
 
+[![CI](https://github.com/atasoglu/websense/actions/workflows/test.yml/badge.svg)](https://github.com/atasoglu/websense/actions/workflows/test.yml)
+[![PyPI version](https://img.shields.io/pypi/v/websense)](https://pypi.org/project/websense/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 > **"Making sense of the web."**
 
 WebSense is a Python library that transforms raw websites into structured, meaningful data. It leverages AI through the [ask2api](https://github.com/atasoglu/ask2api) library to semantically understand page content, allowing you to extract complex data structures without writing brittle CSS selectors or XPath expressions.
