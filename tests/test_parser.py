@@ -23,9 +23,13 @@ class TestParser:
 
         assert parser.config.model == "gpt-4"
 
+    @patch("websense.parser.Config")
     @patch("websense.parser.generate_api_response")
-    def test_extract_with_schema(self, mock_generate):
+    def test_extract_with_schema(self, mock_generate, mock_config_cls):
+        mock_config_instance = MagicMock()
+        mock_config_cls.from_env.return_value = mock_config_instance
         parser = Parser()
+        parser.config = mock_config_instance
         schema = {"type": "object", "properties": {"title": {"type": "string"}}}
         content = "Some content"
 
@@ -39,10 +43,14 @@ class TestParser:
         assert args[1] == schema
         assert parser.config in args
 
-    @patch("websense.parser.generate_api_response")
+    @patch("websense.parser.Config")
     @patch("websense.parser.convert_example_to_schema")
-    def test_extract_with_example(self, mock_convert, mock_generate):
+    @patch("websense.parser.generate_api_response")
+    def test_extract_with_example(self, mock_generate, mock_convert, mock_config_cls):
+        mock_config_instance = MagicMock()
+        mock_config_cls.from_env.return_value = mock_config_instance
         parser = Parser()
+        parser.config = mock_config_instance
         example = {"title": "Example Title"}
         generated_schema = {
             "type": "object",
@@ -60,16 +68,24 @@ class TestParser:
         args, _ = mock_generate.call_args
         assert args[1] == generated_schema
 
-    def test_extract_no_schema_or_example(self):
+    @patch("websense.parser.Config")
+    def test_extract_no_schema_or_example(self, mock_config_cls):
+        mock_config_instance = MagicMock()
+        mock_config_cls.from_env.return_value = mock_config_instance
         parser = Parser()
+        parser.config = mock_config_instance
         with pytest.raises(
             ValueError, match="must provide either a schema or a JSON example"
         ):
             parser.extract("content")
 
+    @patch("websense.parser.Config")
     @patch("websense.parser.generate_api_response")
-    def test_extract_content_truncation(self, mock_generate):
+    def test_extract_content_truncation(self, mock_generate, mock_config_cls):
+        mock_config_instance = MagicMock()
+        mock_config_cls.from_env.return_value = mock_config_instance
         parser = Parser()
+        parser.config = mock_config_instance
         long_content = "a" * 15000
         schema = {"type": "object"}
 
