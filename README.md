@@ -75,9 +75,37 @@ Specify a different language model for extraction:
 scraper = Scraper(model="gpt-4")
 ```
 
-See the environment variables in the [ask2api](https://github.com/atasoglu/ask2api) repository to configure your LLM provider.
+## CLI Usage
 
-The `examples/` directory contains real-world use cases:
+WebSense provides a command-line interface for quick data extraction:
+
+```bash
+# Extract structured data from a webpage
+websense scrape https://example.com --example schema.json --verbose
+
+# Get cleaned content only
+websense content https://example.com --output content.md
+
+# With custom options
+websense scrape https://example.com -e schema.json --model gpt-4 --timeout 30
+```
+
+Available options for `scrape` command:
+
+| Option | Description |
+|--------|-------------|
+| `--model, -m` | LLM model name |
+| `--schema, -s` | JSON schema (file path or raw JSON string) |
+| `--example, -e` | JSON example (file path or raw JSON string) |
+| `--output, -o` | Output file path |
+| `--timeout, -t` | Request timeout (default: 10) |
+| `--retries, -r` | Retry attempts (default: 3) |
+| `--verbose, -v` | Enable verbose output |
+
+**Pro Tip**: You can pass raw JSON strings directly to the CLI:
+```bash
+websense scrape https://example.com -e '{"title": "string"}'
+```
 
 ## How It Works
 
