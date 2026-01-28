@@ -19,7 +19,8 @@ requires-python = ">=3.10"
 dependencies = [
     "requests",
     "beautifulsoup4",
-    "ask2api"
+    "ask2api",
+    "markdownify",
 ]
 [project.optional-dependencies]
 dev = [

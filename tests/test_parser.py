@@ -4,32 +4,15 @@ from websense.parser import Parser
 
 
 class TestParser:
-    @patch("websense.parser.Config")
-    def test_init_defaults(self, mock_config_cls):
-        mock_config_instance = MagicMock()
-        mock_config_cls.from_env.return_value = mock_config_instance
+    def test_init_with_config(self):
+        mock_config = MagicMock()
+        parser = Parser(config=mock_config)
+        assert parser.config == mock_config
 
-        parser = Parser()
-
-        mock_config_cls.from_env.assert_called_once()
-        assert parser.config == mock_config_instance
-
-    @patch("websense.parser.Config")
-    def test_init_custom_model(self, mock_config_cls):
-        mock_config_instance = MagicMock()
-        mock_config_cls.from_env.return_value = mock_config_instance
-
-        parser = Parser(model="gpt-4")
-
-        assert parser.config.model == "gpt-4"
-
-    @patch("websense.parser.Config")
     @patch("websense.parser.generate_api_response")
-    def test_extract_with_schema(self, mock_generate, mock_config_cls):
-        mock_config_instance = MagicMock()
-        mock_config_cls.from_env.return_value = mock_config_instance
-        parser = Parser()
-        parser.config = mock_config_instance
+    def test_extract_with_schema(self, mock_generate):
+        mock_config = MagicMock()
+        parser = Parser(config=mock_config)
         schema = {"type": "object", "properties": {"title": {"type": "string"}}}
         content = "Some content"
 
@@ -41,16 +24,13 @@ class TestParser:
         mock_generate.assert_called_once()
         args, _ = mock_generate.call_args
         assert args[1] == schema
-        assert parser.config in args
+        assert args[2] == mock_config
 
-    @patch("websense.parser.Config")
     @patch("websense.parser.convert_example_to_schema")
     @patch("websense.parser.generate_api_response")
-    def test_extract_with_example(self, mock_generate, mock_convert, mock_config_cls):
-        mock_config_instance = MagicMock()
-        mock_config_cls.from_env.return_value = mock_config_instance
-        parser = Parser()
-        parser.config = mock_config_instance
+    def test_extract_with_example(self, mock_generate, mock_convert):
+        mock_config = MagicMock()
+        parser = Parser(config=mock_config)
         example = {"title": "Example Title"}
         generated_schema = {
             "type": "object",
@@ -68,24 +48,18 @@ class TestParser:
         args, _ = mock_generate.call_args
         assert args[1] == generated_schema
 
-    @patch("websense.parser.Config")
-    def test_extract_no_schema_or_example(self, mock_config_cls):
-        mock_config_instance = MagicMock()
-        mock_config_cls.from_env.return_value = mock_config_instance
-        parser = Parser()
-        parser.config = mock_config_instance
+    def test_extract_no_schema_or_example(self):
+        mock_config = MagicMock()
+        parser = Parser(config=mock_config)
         with pytest.raises(
             ValueError, match="must provide either a schema or a JSON example"
         ):
             parser.extract("content")
 
-    @patch("websense.parser.Config")
     @patch("websense.parser.generate_api_response")
-    def test_extract_content_truncation(self, mock_generate, mock_config_cls):
-        mock_config_instance = MagicMock()
-        mock_config_cls.from_env.return_value = mock_config_instance
-        parser = Parser()
-        parser.config = mock_config_instance
+    def test_extract_content_truncation(self, mock_generate):
+        mock_config = MagicMock()
+        parser = Parser(config=mock_config)
         long_content = "a" * 15000
         schema = {"type": "object"}
 
@@ -95,9 +69,62 @@ class TestParser:
         prompt = args[0]
         # Should contain truncated content (12000 chars)
         assert len(long_content) > 12000
-        # The prompt format is "Extract structured data from the following webpage content:\n\n{truncated_content}"
-        # We check if the prompt contains the truncated version (12000 'a's)
         assert "a" * 12000 in prompt
-        assert (
-            "a" * 12001 not in prompt
-        )  # should not have the 12001th char from content itself (if we ignore prompt prefix)
+        assert "a" * 12001 not in prompt
+
+    @patch("websense.parser.generate_api_response")
+    def test_extract_no_truncation(self, mock_generate):
+        mock_config = MagicMock()
+        parser = Parser(config=mock_config)
+        long_content = "a" * 15000
+        schema = {"type": "object"}
+
+        parser.extract(long_content, schema=schema, truncate=False)
+
+        args, _ = mock_generate.call_args
+        prompt = args[0]
+        # Content should not be truncated
+        assert "a" * 15000 in prompt
+
+    @patch("websense.parser.generate_api_response")
+    def test_extract_custom_truncate_length(self, mock_generate):
+        mock_config = MagicMock()
+        parser = Parser(config=mock_config)
+        content = "a" * 1000
+        schema = {"type": "object"}
+
+        parser.extract(content, schema=schema, truncate_length=500)
+
+        args, _ = mock_generate.call_args
+        prompt = args[0]
+        # Content should be truncated to 500 chars
+        assert "a" * 500 in prompt
+        assert "a" * 501 not in prompt
+
+    @patch("websense.parser.generate_api_response")
+    def test_extract_custom_prompt(self, mock_generate):
+        mock_config = MagicMock()
+        parser = Parser(config=mock_config)
+        content = "Test content"
+        schema = {"type": "object"}
+        custom_prompt = "Extract product info from this page."
+
+        parser.extract(content, schema=schema, prompt=custom_prompt)
+
+        args, _ = mock_generate.call_args
+        prompt = args[0]
+        assert custom_prompt in prompt
+        assert content in prompt
+
+    @patch("websense.parser.generate_api_response")
+    def test_extract_default_prompt(self, mock_generate):
+        mock_config = MagicMock()
+        parser = Parser(config=mock_config)
+        content = "Test content"
+        schema = {"type": "object"}
+
+        parser.extract(content, schema=schema)
+
+        args, _ = mock_generate.call_args
+        prompt = args[0]
+        assert "Extract structured data from the following webpage content" in prompt

@@ -9,6 +9,13 @@ class Fetcher:
     def __init__(
         self, user_agent: str = "WebSense/1.0", timeout: int = 10, retries: int = 3
     ):
+        """Initialize the Fetcher with HTTP session configuration.
+
+        Args:
+            user_agent: User-Agent header for requests.
+            timeout: Request timeout in seconds.
+            retries: Number of retry attempts for failed requests.
+        """
         self.timeout = timeout
         self.session = requests.Session()
         self.session.headers.update({"User-Agent": user_agent})

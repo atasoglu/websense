@@ -10,6 +10,8 @@ repos:
     rev: v4.2.0
     hooks:
       - id: complexipy
+        args: [--max-complexity-allowed, "10"]
+        exclude: ^tests/
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
