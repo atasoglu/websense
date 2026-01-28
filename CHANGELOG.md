@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-01-28
+
+### Added
+- **Markdown output support**: Web content can now be exported as Markdown using `markdownify`
+- GitHub Actions workflows for pre-commit checks and PyPI publishing
+- Advanced configuration examples
+
+### Changed
+- Refactored `cleaner.py` module for improved maintainability
+- Enhanced docstrings across all modules for better documentation
+- Improved test coverage to 100%
+
+### Fixed
+- Author name formatting in `pyproject.toml`
+
 ## [0.1.1] - 2026-01-28
 
 ### Fixed
