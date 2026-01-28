@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-01-28
+
+### Added
+- **CLI module**: New command-line interface with `websense scrape` and `websense content` commands
+- Full parameter support via CLI options: `--model`, `--timeout`, `--retries`, `--user-agent`, etc.
+- Colorful, minimal CLI output with progress indicators
+- `rich-click` dependency for CLI functionality
+
+
 ## [0.2.0] - 2026-01-28
 
 ### Added
