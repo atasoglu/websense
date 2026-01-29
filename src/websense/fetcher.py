@@ -1,4 +1,7 @@
+"""HTTP fetching capabilities for WebSense."""
+
 import requests
+
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
@@ -30,7 +33,17 @@ class Fetcher:
         self.session.mount("https://", adapter)
 
     def fetch(self, url: str) -> requests.Response:
-        """Fetches the content of a URL."""
+        """Fetches the content of a URL.
+
+        Args:
+            url: The URL to fetch.
+
+        Returns:
+            The requests.Response object.
+
+        Raises:
+            RuntimeError: If the request fails or returns an error status.
+        """
         try:
             response = self.session.get(url, timeout=self.timeout)
             response.raise_for_status()

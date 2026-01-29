@@ -1,4 +1,7 @@
+"""HTML cleaning and normalization for WebSense."""
+
 from bs4 import BeautifulSoup
+
 from markdownify import markdownify as md
 from typing import Iterable
 
@@ -43,7 +46,14 @@ class Cleaner:
         return soup
 
     def to_text(self, html: str) -> str:
-        """Strips non-content tags and normalizes whitespace."""
+        """Strips non-content tags and normalizes whitespace.
+
+        Args:
+            html: Raw HTML content.
+
+        Returns:
+            Normalized plain text content.
+        """
         soup = self.preprocess(html)
         # Get text and clean up whitespace
         lines = (line.strip() for line in soup.get_text(separator="\n").splitlines())
