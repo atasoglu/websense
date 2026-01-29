@@ -75,7 +75,9 @@ def parse_json_input(value: str) -> dict:
     result = _try_parse_json(value)
     if result is not None:
         return result
-    raise click.ClickException(f"Invalid JSON string or missing file: {value}")
+    raise click.ClickException(
+        f"Input is neither a valid JSON string nor an existing file: {value}"
+    )
 
 
 def _init_scraper(model, timeout, retries, user_agent) -> Scraper:

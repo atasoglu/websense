@@ -6,7 +6,9 @@ from ddgs import DDGS
 class Searcher:
     """Handles web search operations using DuckDuckGo."""
 
-    def search(self, query: str, max_results: int, region: str) -> list[dict]:
+    def search(
+        self, query: str, max_results: int = 5, region: str = "wt-wt"
+    ) -> list[dict]:
         """Perform a web search and return results.
 
         Args:

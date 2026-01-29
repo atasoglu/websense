@@ -123,6 +123,10 @@ class Scraper:
             Consolidated data if max_results > 1, else single source data.
         """
         results = self.searcher.search(query, max_results, region)
+        if not results:
+            raise RuntimeError(f"No search results found for query '{query}'")
+
+        extract_kwargs = extract_kwargs or {}
         # Build extraction prompt with query context
         if "prompt" not in extract_kwargs:
             extract_kwargs["prompt"] = (

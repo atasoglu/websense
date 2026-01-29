@@ -118,8 +118,8 @@ class TestHelperFunctions:
 
         path = tmp_path / "locked.json"
         path.write_text("{}", encoding="utf-8")
-        # Mock open to raise exception
-        with patch("builtins.open", side_effect=OSError("Read error")):
+        # Mock Path.read_text to raise exception
+        with patch("pathlib.Path.read_text", side_effect=OSError("Read error")):
             with pytest.raises(ClickException, match="Error reading file"):
                 parse_json_input(str(path))
 
@@ -185,8 +185,8 @@ class TestScrapeCommand:
 
         with (
             patch("websense.cli.Fetcher") as MockFetcher,
-            patch("websense.cli.Cleaner") as MockCleaner,
-            patch("websense.cli.Parser") as MockParser,
+            patch("websense.scraper.Cleaner") as MockCleaner,
+            patch("websense.scraper.Parser") as MockParser,
             patch("websense.cli.Config") as MockConfig,
         ):
             mock_fetcher = MagicMock()
@@ -222,8 +222,8 @@ class TestScrapeCommand:
 
         with (
             patch("websense.cli.Fetcher") as MockFetcher,
-            patch("websense.cli.Cleaner") as MockCleaner,
-            patch("websense.cli.Parser") as MockParser,
+            patch("websense.scraper.Cleaner") as MockCleaner,
+            patch("websense.scraper.Parser") as MockParser,
             patch("websense.cli.Config") as MockConfig,
         ):
             mock_fetcher = MagicMock()
@@ -259,8 +259,8 @@ class TestScrapeCommand:
 
         with (
             patch("websense.cli.Fetcher") as MockFetcher,
-            patch("websense.cli.Cleaner") as MockCleaner,
-            patch("websense.cli.Parser") as MockParser,
+            patch("websense.scraper.Cleaner") as MockCleaner,
+            patch("websense.scraper.Parser") as MockParser,
             patch("websense.cli.Config") as MockConfig,
         ):
             mock_fetcher = MagicMock()
@@ -303,8 +303,8 @@ class TestScrapeCommand:
 
         with (
             patch("websense.cli.Fetcher") as MockFetcher,
-            patch("websense.cli.Cleaner") as MockCleaner,
-            patch("websense.cli.Parser") as MockParser,
+            patch("websense.scraper.Cleaner") as MockCleaner,
+            patch("websense.scraper.Parser") as MockParser,
             patch("websense.cli.Config") as MockConfig,
             patch("websense.cli.Scraper.scrape") as mock_scrape,
         ):
@@ -335,8 +335,8 @@ class TestScrapeCommand:
         """Test scrape with verbose and raw JSON to cover lines 146-147."""
         with (
             patch("websense.cli.Fetcher"),
-            patch("websense.cli.Cleaner"),
-            patch("websense.cli.Parser"),
+            patch("websense.scraper.Cleaner"),
+            patch("websense.scraper.Parser"),
             patch("websense.cli.Config") as MockConfig,
             patch("websense.cli.Scraper.scrape") as mock_scrape,
         ):
@@ -364,8 +364,8 @@ class TestScrapeCommand:
 
         with (
             patch("websense.cli.Fetcher") as MockFetcher,
-            patch("websense.cli.Cleaner") as MockCleaner,
-            patch("websense.cli.Parser") as MockParser,
+            patch("websense.scraper.Cleaner") as MockCleaner,
+            patch("websense.scraper.Parser") as MockParser,
             patch("websense.cli.Config") as MockConfig,
         ):
             mock_fetcher = MagicMock()
@@ -406,8 +406,8 @@ class TestScrapeCommand:
 
         with (
             patch("websense.cli.Fetcher") as MockFetcher,
-            patch("websense.cli.Cleaner") as MockCleaner,
-            patch("websense.cli.Parser") as MockParser,
+            patch("websense.scraper.Cleaner") as MockCleaner,
+            patch("websense.scraper.Parser") as MockParser,
             patch("websense.cli.Config") as MockConfig,
         ):
             mock_fetcher = MagicMock()
@@ -472,8 +472,8 @@ class TestScrapeCommand:
 
         with (
             patch("websense.cli.Fetcher") as MockFetcher,
-            patch("websense.cli.Cleaner") as MockCleaner,
-            patch("websense.cli.Parser") as MockParser,
+            patch("websense.scraper.Cleaner") as MockCleaner,
+            patch("websense.scraper.Parser") as MockParser,
             patch("websense.cli.Config") as MockConfig,
         ):
             mock_fetcher = MagicMock()
@@ -511,8 +511,8 @@ class TestScrapeCommand:
         """Test scrape with raw JSON example string."""
         with (
             patch("websense.cli.Fetcher") as MockFetcher,
-            patch("websense.cli.Cleaner") as MockCleaner,
-            patch("websense.cli.Parser") as MockParser,
+            patch("websense.scraper.Cleaner") as MockCleaner,
+            patch("websense.scraper.Parser") as MockParser,
             patch("websense.cli.Config") as MockConfig,
         ):
             MockFetcher.return_value = MagicMock()
@@ -533,8 +533,8 @@ class TestScrapeCommand:
         """Test scrape with raw JSON schema string."""
         with (
             patch("websense.cli.Fetcher") as MockFetcher,
-            patch("websense.cli.Cleaner") as MockCleaner,
-            patch("websense.cli.Parser") as MockParser,
+            patch("websense.scraper.Cleaner") as MockCleaner,
+            patch("websense.scraper.Parser") as MockParser,
             patch("websense.cli.Config") as MockConfig,
         ):
             MockFetcher.return_value = MagicMock()
@@ -560,8 +560,8 @@ class TestScrapeCommand:
         """Test scrape with custom prompt."""
         with (
             patch("websense.cli.Fetcher") as MockFetcher,
-            patch("websense.cli.Cleaner") as MockCleaner,
-            patch("websense.cli.Parser") as MockParser,
+            patch("websense.scraper.Cleaner") as MockCleaner,
+            patch("websense.scraper.Parser") as MockParser,
             patch("websense.cli.Config") as MockConfig,
             patch("websense.cli.Scraper.scrape") as mock_scrape,
         ):
@@ -803,3 +803,105 @@ class TestContentCommand:
 
             assert result.exit_code == 0
             assert "Content saved to" in result.output
+
+
+class TestSearchCommand:
+    """Tests for the search command."""
+
+    def test_search_basic(self, runner):
+        """Test basic search functionality."""
+        with patch("websense.cli.Searcher") as MockSearcher:
+            mock_searcher = MockSearcher.return_value
+            mock_searcher.search.return_value = [
+                {"title": "T", "url": "U", "description": "D"}
+            ]
+
+            result = runner.invoke(main, ["search", "query"])
+
+            assert result.exit_code == 0
+            assert "T" in result.output
+
+    def test_search_verbose(self, runner):
+        """Test search with verbose output."""
+        with patch("websense.cli.Searcher") as MockSearcher:
+            mock_searcher = MockSearcher.return_value
+            mock_searcher.search.return_value = [
+                {"title": "T", "url": "U", "description": "D"}
+            ]
+
+            result = runner.invoke(main, ["search", "query", "--verbose"])
+
+            assert result.exit_code == 0
+            assert "WebSense" in result.output
+            assert "Search query: query" in result.output
+
+    def test_search_error(self, runner):
+        """Test search handles errors."""
+        with patch("websense.cli.Searcher") as MockSearcher:
+            mock_searcher = MockSearcher.return_value
+            mock_searcher.search.side_effect = RuntimeError("Search failed")
+
+            result = runner.invoke(main, ["search", "query"])
+
+            assert result.exit_code == 1
+            assert "Search failed" in result.output
+
+
+class TestSearchScrapeCommand:
+    """Tests for the search-scrape command."""
+
+    def test_search_scrape_basic(self, runner):
+        """Test basic search-scrape functionality."""
+        with (
+            patch("websense.cli.Scraper") as MockScraper,
+            patch("websense.cli.Config"),
+        ):
+            mock_scraper = MockScraper.return_value
+            mock_scraper.search_and_scrape.return_value = {
+                "query": "q",
+                "top_k": 1,
+                "sources": [{"url": "u", "success": True}],
+                "data": {"result": "ok"},
+            }
+
+            result = runner.invoke(main, ["search-scrape", "q", "--example", '{"x":1}'])
+
+            assert result.exit_code == 0
+            assert "ok" in result.output
+
+    def test_search_scrape_verbose(self, runner):
+        """Test search-scrape with verbose output."""
+        with (
+            patch("websense.cli.Scraper") as MockScraper,
+            patch("websense.cli.Config"),
+        ):
+            mock_scraper = MockScraper.return_value
+            mock_scraper.search_and_scrape.return_value = {
+                "query": "q",
+                "top_k": 1,
+                "sources": [{"url": "u", "success": True}],
+                "data": {"result": "ok"},
+            }
+
+            result = runner.invoke(
+                main, ["search-scrape", "q", "--example", '{"x":1}', "--verbose"]
+            )
+
+            assert result.exit_code == 0
+            assert "WebSense" in result.output
+            assert "Search query: q" in result.output
+            assert "Successfully scraped 1/1 sources" in result.output
+
+    def test_search_scrape_error(self, runner):
+        """Test search-scrape handles errors."""
+        with (
+            patch("websense.cli.Scraper") as MockScraper,
+            patch("websense.cli.Config"),
+        ):
+            mock_scraper = MockScraper.return_value
+            mock_scraper.search_and_scrape.side_effect = RuntimeError("Scrape failed")
+
+            result = runner.invoke(main, ["search-scrape", "q", "--example", '{"x":1}'])
+
+            assert result.exit_code == 1
+            assert "Scrape failed" in result.output
