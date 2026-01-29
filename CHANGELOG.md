@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.1] - 2026-01-30
+
+### Fixed
+- **CI Test Reliability**: Patched `Config` in scraper tests to prevent "API key is not set" errors in environments without environment variables.
+- Improved test isolation for mock objects.
+
 ## [0.4.0] - 2026-01-30
 
 ### Added

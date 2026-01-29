@@ -110,7 +110,12 @@ class TestScraper:
 
     def test_judge(self):
         """Test the _judge method directly."""
-        with patch("websense.scraper.Parser") as MockParser:
+        with (
+            patch("websense.scraper.Parser") as MockParser,
+            patch("websense.scraper.Config") as MockConfig,
+        ):
+            mock_config_instance = MagicMock()
+            MockConfig.from_env.return_value = mock_config_instance
             mock_parser = MockParser.return_value
             mock_parser.extract.return_value = {"merged": "ok"}
 
@@ -124,9 +129,12 @@ class TestScraper:
             call_args = mock_parser.extract.call_args
             assert "test query" in call_args[1]["prompt"]
 
+    @patch("websense.scraper.Config")
     @patch("websense.scraper.Searcher")
-    def test_search_and_scrape_no_results(self, MockSearcher):
+    def test_search_and_scrape_no_results(self, MockSearcher, MockConfig):
         """Test search_and_scrape raising error when no results."""
+        mock_config_instance = MagicMock()
+        MockConfig.from_env.return_value = mock_config_instance
         MockSearcher.return_value.search.return_value = []
         scraper = Scraper()
         with pytest.raises(RuntimeError, match="No search results found"):
