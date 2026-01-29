@@ -16,7 +16,9 @@ WebSense is a Python library that transforms raw websites into structured, meani
 - **Minimalist API**: Extract data in 3 lines of code
 - **Auto-Cleaning**: Intelligent noise removal filters focus on meaningful content
 - **Flexible Schemas**: Use JSON schemas or provide examples for schema inference
-- **Modular Design**: Fetch, clean, and parse stages can be customized independently
+- **Web Search Integration**: Search the web and scrape top results in one go
+- **Multi-Source Consolidation**: Aggregate information from multiple websites into one structured result
+- **Modular Design**: Fetch, search, clean, and parse stages can be customized independently
 
 ## Installation
 
@@ -75,6 +77,24 @@ Specify a different language model for extraction:
 scraper = Scraper(model="gpt-4")
 ```
 
+### Web Search & Consolidation
+
+Search the web and consolidate information from the top 3 results:
+
+```python
+data = scraper.search_and_scrape(
+    "latest news about SpaceX Starship",
+    max_results=3,
+    example={
+        "status": "string",
+        "last_launch": "string",
+        "summary": "brief overview"
+    }
+)
+```
+
+WebSense intelligently crawls multiple sources and uses an LLM-based "judge" to synthesize the most accurate data from all sources.
+
 ## CLI Usage
 
 WebSense provides a command-line interface for quick data extraction:
@@ -83,11 +103,14 @@ WebSense provides a command-line interface for quick data extraction:
 # Extract structured data from a webpage
 websense scrape https://example.com --example schema.json --verbose
 
+# Search the web and consolidate top 3 results
+websense search-scrape "Nvidia stock performance 2024" --top-k 3 --example '{"price": "str"}'
+
+# Search search only (returns titles and URLs)
+websense search "query" --verbose
+
 # Get cleaned content only
 websense content https://example.com --output content.md
-
-# With custom options
-websense scrape https://example.com -e schema.json --model gpt-4 --timeout 30
 ```
 
 Available options for `scrape` command:

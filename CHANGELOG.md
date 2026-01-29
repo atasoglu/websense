@@ -2,7 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.4.0] - 2026-01-30
+
+### Added
+- **Web Search Integration**: New `Searcher` module using DuckDuckGo for live search capabilities.
+- **Search-and-Scrape**: Seamless integration to search web and scrape top results in a single step.
+- **Multi-Source Consolidation**: Advanced feature to crawl multiple sources and synthesize them into one structured response using LLM.
+- **CLI Search Commands**: Added `search` and `search-scrape` commands to terminal interface.
+- **New Examples**: Added `multi_source_consolidation.py` and news extraction examples.
+
+### Changed
+- **Architectural Cleanup**: Simplified `Searcher` and `Scraper` classes for better modularity.
+- **Improved Test Coverage**: Reached 99% code coverage with robust test suites for search and consolidation.
+- **Robustness**: Improved error handling for network issues and empty search results.
+
+### Fixed
+- Fixed crash in `search_and_scrape` when `extract_kwargs` was missing.
+- Fixed linting and pre-commit errors across the codebase.
 
 ## [0.3.0] - 2026-01-28
 

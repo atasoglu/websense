@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "websense"
-version = "0.3.0"
+version = "0.4.0"
 description = "A modular AI-powered web scraper for data pipelines."
 keywords = ["scraper", "web", "automation", "data-extraction", "parsing", "crawler", "ai", "llm", "machine-learning"]
 readme = "README.md"
